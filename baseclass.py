@@ -82,3 +82,124 @@ class NakitOdeme(OdemeYontemi):
         else:
             print("Yetersiz nakit!")
             
+# SERVİSLER
+class YemekhaneServisi:
+    def __init__(self):
+        # Menü: ürün adı -> fiyat
+        self.menu = {
+            "Hamburger": 25,
+            "Pizza": 40,
+            "Salata": 15,
+            "Kahve": 10,
+            "Çay": 5
+        }
+        # Sipariş listesi
+        self.siparisler = []
+
+    def menu_goster(self):
+        print("---- Menü ----")
+        for urun, fiyat in self.menu.items():
+            print(f"{urun}: {fiyat} TL")
+        print("--------------")
+
+    def siparis_olustur(self, kullanici, secilen_urunler: dict):
+        """
+        secilen_urunler: {"Hamburger": 2, "Kahve":1} gibi
+        """
+        toplam_tutar = 0
+        for urun, adet in secilen_urunler.items():
+            if urun in self.menu:
+                toplam_tutar += self.menu[urun] * adet
+            else:
+                print(f"{urun} menüde bulunamadı!")
+        siparis = {
+            "kullanici": kullanici,
+            "urunler": secilen_urunler,
+            "toplam_tutar": toplam_tutar,
+            "tarih": datetime.now()
+        }
+        self.siparisler.append(siparis)
+        print(f"{kullanici} için sipariş oluşturuldu. Toplam tutar: {toplam_tutar} TL")
+        return toplam_tutar
+
+# REPO / VERİ YÖNETİMİ
+class OdemeRepository:
+    def __init__(self):
+        self.odemeler = []  # ödeme kayıtları
+        self.odeme_yontemleri = []  # kullanıcıların ödeme yöntemleri
+
+    def odeme_yontemi_ekle(self, odeme_yontemi: OdemeYontemi):
+        self.odeme_yontemleri.append(odeme_yontemi)
+
+    def kullanici_odeme_yontemlerini_getir(self, kullanici):
+        return [yontem for yontem in self.odeme_yontemleri if yontem.sahip == kullanici]
+
+    def odeme_kaydet(self, odeme: dict):
+        self.odemeler.append(odeme)
+        print(f"{odeme['kullanici']} adlı kullanıcının {odeme['toplam_tutar']} TL tutarındaki ödemesi kaydedildi.")
+
+    def odeme_filtrele(self, kullanici=None, baslangic_tarihi=None, bitis_tarihi=None):
+        sonuc = self.odemeler
+        if kullanici:
+            sonuc = [o for o in sonuc if o["kullanici"] == kullanici]
+        if baslangic_tarihi:
+            sonuc = [o for o in sonuc if o["tarih"] >= baslangic_tarihi]
+        if bitis_tarihi:
+            sonuc = [o for o in sonuc if o["tarih"] <= bitis_tarihi]
+        return sonuc
+
+# ÖDEME SERVİSİ
+
+class OdemeServisi:
+    def __init__(self, repo: OdemeRepository):
+        self.repo = repo
+
+    def odeme_yap(self, kullanici, odeme_yontemi: OdemeYontemi, tutar):
+        if odeme_yontemi.yetkilendir(tutar):
+            odeme_yontemi.ode(tutar)
+            kayit = {
+                "kullanici": kullanici,
+                "toplam_tutar": tutar,
+                "tarih": datetime.now(),
+                "odeme_turu": type(odeme_yontemi).__name__
+            }
+            self.repo.odeme_kaydet(kayit)
+            print(f"{kullanici} adlı kullanıcının ödemesi başarıyla gerçekleşti.")
+            return True
+        else:
+            print(f"{kullanici} adlı kullanıcının ödemesi gerçekleştirilemedi. Yetersiz bakiye/limit!")
+            return False
+
+# TEST ÖRNEKLERİ
+
+if __name__ == "__main__":
+    # Repo ve servis
+    repo = OdemeRepository()
+    servis = OdemeServisi(repo)
+    yemekhane = YemekhaneServisi()
+
+    # Ödeme yöntemleri
+    kredi = KrediKartiOdeme("1234567812345678", "12/30", "123", "Ali", 0, limit=500)
+    nakit = NakitOdeme("", "", "", "Veli", 200)
+    cuzdan = DijitalCuzdanOdeme("", "", "", 0, "Ayşe", 150)
+
+    # Repo'ya ekle
+    repo.odeme_yontemi_ekle(kredi)
+    repo.odeme_yontemi_ekle(nakit)
+    repo.odeme_yontemi_ekle(cuzdan)
+
+    # Menü göster
+    yemekhane.menu_goster()
+
+    # Sipariş oluştur
+    toplam = yemekhane.siparis_olustur("Ali", {"Hamburger": 2, "Kahve":1})
+
+    # Ödeme denemesi
+    servis.odeme_yap("Ali", kredi, toplam)
+    servis.odeme_yap("Veli", nakit, toplam)
+    servis.odeme_yap("Ayşe", cuzdan, toplam)
+
+    # Raporlama
+    print("\n--- Ödeme Geçmişi ---")
+    for odeme in repo.odeme_filtrele():
+        print(odeme)
