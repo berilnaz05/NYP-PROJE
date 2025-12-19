@@ -1,150 +1,160 @@
-from _future_ import annotations
-from dataclasses import dataclass, field
-from typing import List, Optional
-from datetime import datetime, date
+#BASE CLASS
+from abc import ABC, abstractmethod
+from datetime import datetime
 
-from base import Patient, PatientBaseInfo, PatientStatus
+#Ödeme Yöntemi 
+class OdemeYontemi(ABC):
+    def __init__(self, kart_numarasi, son_kullanma_tarihi, cvv, tutar, sahip, bakiye, para_birimi="TL",cuzdan_adi=None, dogrulanmis=False):
+        self.sahip = sahip
+        self.bakiye = bakiye
+        self.para_birimi = para_birimi
+        self.kart_numarasi = kart_numarasi
+        self.son_kullanma_tarihi = son_kullanma_tarihi  
+        self.cvv = cvv
+        self.tutar = tutar
+        self.cuzdan_adi = cuzdan_adi
+        self.dogrulanmis = dogrulanmis
 
-@dataclass
-class Allergy:
-    name: str
-    severity: str  
-    note: str = ""
+    @abstractmethod
+    def yetkilendir(self, tutar):
+        pass
 
-@dataclass
-class MedicalRecordEntry:
-    when: datetime
-    description: str
-    doctor: str
-
-@dataclass
-class MedicalRecord:
-    patient_id: str
-    entries: List[MedicalRecordEntry] = field(default_factory=list)
-
-
-    def add_entry(self, description: str, doctor: str) -> None:
-        self.entries.append(MedicalRecordEntry(datetime.now(), description, doctor))
-
-    @staticmethod
-    def summarize(entries: List[MedicalRecordEntry]) -> str:
-        return f"Toplam {len(entries)} kayıt"
-
-    @classmethod
-    def empty_for(cls, patient_id: str) -> "MedicalRecord":
-        return cls(patient_id=patient_id)
-
-@dataclass
-class VisitHistoryItem:
-    visit_date: date
-    department: str
-    notes: str = ""
-
-@dataclass
-class VisitHistory:
-    patient_id: str
-    visits: List[VisitHistoryItem] = field(default_factory=list)
-
-    def add_visit(self, department: str, notes: str = "") -> None:
-        self.visits.append(VisitHistoryItem(date.today(), department, notes))
-
-    @staticmethod
-    def last_visit_department(visits: List[VisitHistoryItem]) -> Optional[str]:
-        return visits[-1].department if visits else None
-
-    @classmethod
-    def empty_for(cls, patient_id: str) -> "VisitHistory":
-        return cls(patient_id=patient_id)
-
-
-
-class Inpatient(Patient):
-    """Yatan hasta: oda ve yatış tarihi bilgisi içerir."""
-
-    def _init_(self, base: PatientBaseInfo, room_number: str, admission_date: date):
-        super()._init_(base)
-        self.room_number = room_number
-        self.admission_date = admission_date
-        self.allergies: List[Allergy] = []
-        self.record = MedicalRecord.empty_for(base.id)
-        self.visits = VisitHistory.empty_for(base.id)
-
-    def get_info(self) -> str:
-        return (f"[Inpatient] {self.base.name} | Oda: {self.room_number} | "
-                f"Yatış: {self.admission_date.isoformat()} | Durum: {self.base.status}")
-
-    def update_status(self, new_status: str) -> None:
-        if new_status == PatientStatus.DISCHARGED:
-            self.record.add_entry("Taburcu özeti oluşturuldu", doctor="Servis Doktoru")
-        self.base.status = new_status
-
-    def change_room(self, new_room: str) -> None:
-        self.room_number = new_room
-
-    @staticmethod
-    def is_long_stay(admission_date: date, threshold_days: int = 10) -> bool:
-        return (date.today() - admission_date).days >= threshold_days
-
-    @classmethod
-    def create_default(cls, base: PatientBaseInfo) -> "Inpatient":
-        return cls(base=base, room_number="Z-101", admission_date=date.today())
-
-class Outpatient(Patient):
-    """Ayakta (poliklinik) hasta: randevu tarihi içerir."""
-
-    def _init_(self, base: PatientBaseInfo, appointment_date: date):
-        super()._init_(base)
-        self.appointment_date = appointment_date
-        self.record = MedicalRecord.empty_for(base.id)
-        self.visits = VisitHistory.empty_for(base.id)
-
-    def get_info(self) -> str:
-        return (f"[Outpatient] {self.base.name} | Randevu: {self.appointment_date.isoformat()} | "
-                f"Durum: {self.base.status}")
-
-    def update_status(self, new_status: str) -> None:
-        self.visits.add_visit("Poliklinik", notes=f"Durum {self.base.status} -> {new_status}")
-        self.base.status = new_status
-
-    def reschedule(self, new_date: date) -> None:
-        self.appointment_date = new_date
-
-    @staticmethod
-    def needs_followup(record: MedicalRecord) -> bool:
+    def ode(self, tutar):
+        if self.yetkilendir(tutar):
+            return True
+        return False
     
-        return len(record.entries) < 3
+    def bilgi(self, tutar):
+        if self.bakiye >= tutar:
+            print(f"{self.sahip} adlı kullanıcının bakiyesi yeterlidir.")
+        else:
+            print(f"{self.sahip} adlı kullanıcının bakiyesi yetersizdir.")
+        return 
 
-    @classmethod
-    def create_for_today(cls, base: PatientBaseInfo) -> "Outpatient":
-        return cls(base=base, appointment_date=date.today())
+#SUB CLASS 1 - Kredi Kartı Ödeme
+class KrediKartiOdeme(OdemeYontemi):
+    def __init__(self, kart_numarasi, son_kullanma_tarihi, cvv, sahip, bakiye, para_birimi="TL"):
+        super().__init__(kart_numarasi, son_kullanma_tarihi, cvv, 0, sahip, bakiye, para_birimi)
 
-class EmergencyPatient(Patient):
-    """Acil hasta: triyaj seviyesi ve varış zamanı içerir."""
+        # Kart bilgilerini doğrulama
+        if len(kart_numarasi) != 16:
+            raise ValueError("Kart numarası 16 haneli olmalıdır.")
+        else:
+            print("Lütfen son kullanma tarihini 'AA/YY' formatında giriniz.")
 
-    def _init_(self, base: PatientBaseInfo, triage_level: int, arrival_time: datetime):
-        super()._init_(base)
-        self.triage_level = triage_level 
-        self.arrival_time = arrival_time
-        self.record = MedicalRecord.empty_for(base.id)
-        self.visits = VisitHistory.empty_for(base.id)
+        try:
+            kart_tarih = datetime.strptime(son_kullanma_tarihi, "%m/%y")
+            if kart_tarih < datetime.now():
+                raise ValueError("Kartın son kullanma tarihi geçmiş.")
+            else:
+                print("Lütfen CVV kodunu giriniz.")
+        except:
+            raise ValueError("Son kullanma tarihi formatı yanlış. 'AA/YY' şeklinde olmalı.")
 
-    def get_info(self) -> str:
-        return (f"[Emergency] {self.base.name} | Triyaj: {self.triage_level} | "
-                f"Geliş: {self.arrival_time.isoformat()} | Durum: {self.base.status}")
+        if len(cvv) != 3:
+            raise ValueError("CVV kodu 3 haneli olmalıdır.")
+        else:
+            print(f"Sayın {sahip}; Kredi kartı bilgileriniz doğrulandı.")
 
-    def update_status(self, new_status: str) -> None:
-        if self.triage_level == 1 and new_status == PatientStatus.DISCHARGED:
-            self.record.add_entry("Acil kritik vaka taburcu notu", doctor="Acil Hekimi")
-        self.base.status = new_status
+        if para_birimi != "TL":
+            raise ValueError("Kredi kartı ödemeleri sadece TL cinsindendir.")
 
-    def escalate(self) -> None:
-        """Triyaj seviyesini acil ihtiyaç halinde düşür (daha kritik)."""
-        self.triage_level = max(1, self.triage_level - 1)
+    def yetkilendir(self, tutar):
+        return self.bakiye >= tutar
+    
+    def ode(self, tutar):
+        if self.yetkilendir(tutar):
+            self.bakiye -= tutar
+            print(f"Sayın {self.sahip}; {tutar} {self.para_birimi} tutarındaki ödemeniz başarıyla gerçekleştirilmiştir.")
+        else:
+            print(f"Sayın {self.sahip}; yeterli bakiye yok!")
 
-    @staticmethod
-    def is_critical(triage_level: int) -> bool:
-        return triage_level in (1, 2)
+#SUB CLASS 2 - Nakit Ödeme
+class NakitOdeme(OdemeYontemi):
+    def __init__(self, kart_numarasi, son_kullanma_tarihi, cvv, sahip, bakiye, para_birimi="TL"):
+        super().__init__(kart_numarasi, son_kullanma_tarihi, cvv, 0, sahip, bakiye, para_birimi)
 
-    @classmethod
-    def admit_from_ambulance(cls, base: PatientBaseInfo) -> "EmergencyPatient":
-        return cls(base=base, triage_level=2, arrival_time=datetime.now())
+    def yetkilendir(self, tutar):
+        return self.bakiye >= tutar
+    
+    def ode(self, tutar):
+        if self.yetkilendir(tutar):
+            self.bakiye -= tutar
+            print(f"{tutar} {self.para_birimi} nakit ödendi.")
+        else:
+            print("Yetersiz nakit!")
+
+#SUN CLASS3 - Dijital Cüzdan Ödeme
+class DijitalCuzdanOdeme(OdemeYontemi):
+    def __init__(self,  tutar, sahip, bakiye, para_birimi="TL",cuzdan_adi=None, dogrulanmis=False):
+        super().__init__(tutar, sahip, bakiye, para_birimi, cuzdan_adi, dogrulanmis)
+    
+    def yetkilendir(self, tutar):
+        return self.bakiye >= tutar and self.dogrulanmis
+    
+    def ode(self, tutar, bakiye, dogrulanmis, cuzdan_adi):
+        super().__init__(self, tutar, bakiye, dogrulanmis, cuzdan_adi)
+        if dogrulanmis== True:
+            print(f"{cuzdan_adi} adlı dijital cüzdan doğrulandı.")
+        else:
+            print(f"{cuzdan_adi} adlı dijital cüzdan doğrulanmadı. Ödeme yapılamıyor.")
+
+        if bakiye>= tutar:
+            self.bakiye -= tutar
+            print(f"{tutar} {self.para_birimi} tutarındaki ödeme {cuzdan_adi} adlı dijital cüzdandan başarıyla gerçekleştirildi.")
+        else:
+            print("Yetersiz bakiye!")
+
+#Sipariş ve Menü Servisleri
+class YemekhaneMenuServisi:
+    def __init__(self,menu_goster={}):
+        self.menu_goster = menu_goster
+        self.baslangic = {
+            "Mercimek Çorbası": 15,
+            "Ezogelin Çorbası": 12,
+            "Tarhana Çorbası": 10,
+            "Domates Çorbası": 14,
+            "Sebze Çorbası": 13,
+        }
+
+        self.ara_sıcaklar = {
+            "Sigara Böreği": 20,
+            "Patates Kızartması": 18,
+            "Kalamar": 30,
+            "Mücver": 22,
+            "Paçanga Böreği": 25,
+            "Fırınlanmış Midye": 28,
+        }
+
+        self.ana_yemekler,self.salatalar = {
+            "Kuru Fasulye": 25,
+            "Tavuk Sote": 30,
+            "Izgara Köfte": 35,
+            "Sebzeli Makarna": 20,
+            "Balık Izgara": 40,
+            "Et Sote": 45,
+        }, {
+            "Çoban Salata": 15,
+            "Mevsim Salata": 12,
+            "Akdeniz Salata": 18
+        }
+
+        self.tatlilar = {
+            "Sütlaç": 10,
+            "Kazandibi": 12,
+            "Baklava": 20,
+            "Künefe": 25,
+            "Aşure": 15
+        }
+
+        def menu_goster(self):
+            print("\n--- MENÜ ---")
+            for urun, fiyat in self.menu.items():
+                print(f"{urun}: {fiyat} TL")
+
+class Siparis:
+    def __init__(self, secilen_urunler):
+        self.secilen_urunler = secilen_urunler
+    def toplam_tutar_hesapla(self, menu):
+        return sum(menu[urun] for urun in self.secilen_urunler)
+    
