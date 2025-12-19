@@ -97,9 +97,9 @@ class UlasimYoneticisi:
     def sefer_bitir(sefer,arac_id):
         arac = self._arac_bul(arac_id)
         self.sefer_gecmisi.append({"arac id": arac_id,
-                            "tip": arac.bilgi_ver()["tip"],
-                            "ücret": arac.ucret_hesapla(),
-                            "bitiş durumu": arac.durum})
+                                   "tip": arac.bilgi_ver()["tip"],
+                                   "ücret": arac.ucret_hesapla(),
+                                   "bitiş durumu": arac.durum})
         arac.sefer_bitir()
         
     def toplam_gelir(self):
@@ -113,5 +113,5 @@ class UlasimYoneticisi:
             return max(sayac, key=sayac.get) if sayac else None
     def arac_ekle(self, arac):
          if any(a.id == arac.arac_id for a in self.araclar):
-             raise ValueError("Bu ID ile araç zaten var")
-             self.araclar.append(arac)
+            raise ValueError("Bu ID ile araç zaten var")
+            self.araclar.append(arac)
