@@ -1,20 +1,17 @@
-from base import UlasimAraci
-from implementations import Otobus
-from implementations import bisiklet
-from implementations import scooter
+from .base.ulasim_araci import UlasimAraci
 
 class UlasimYoneticisi:
 
     def __init__(self):
         self.araclar: list[UlasimAraci] = []
 
-    def arac_ekle(self, arac: UlasimAraci):
+    def arac_ekle(self, arac):
         if not isinstance(arac, UlasimAraci):
             raise TypeError("Sadece UlasimAraci türünden nesneler eklenebilir")
 
         self.araclar.append(arac)
 
-    def arac_sil(self, arac_id: int):
+    def arac_sil(self, arac_id):
         for arac in self.araclar:
             if arac.id == arac_id:
                 self.araclar.remove(arac)
@@ -24,26 +21,26 @@ class UlasimYoneticisi:
     def tum_araclari_listele(self):
         return [arac.bilgi_ver() for arac in self.araclar]
 
-    def sefer_baslat(self, arac_id: int):
+    def sefer_baslat(self, arac_id):
         arac = self._arac_bul(arac_id)
         arac.sefer_baslat()
         arac.hareket_et()
 
-    def sefer_bitir(self, arac_id: int):
+    def sefer_bitir(self, arac_id):
         arac = self._arac_bul(arac_id)
         arac.sefer_bitir()
         
-    def toplam_ucret_hesapla(self) -> float:
+    def toplam_ucret_hesapla(self) :
         return sum(arac.ucret_hesapla() for arac in self.araclar)
 
-    def duruma_gore_listele(self, durum: str):
+    def duruma_gore_listele(self, durum):
         return [
             arac.bilgi_ver()
             for arac in self.araclar
             if arac.durum == durum
         ]
 
-    def tipe_gore_listele(self, tip: str):
+    def tipe_gore_listele(self, tip):
         return [
             arac.bilgi_ver()
             for arac in self.araclar
@@ -57,7 +54,7 @@ class UlasimYoneticisi:
             rapor[tip] = rapor.get(tip, 0) + 1
         return rapor
 
-    def _arac_bul(self, arac_id: int) -> UlasimAraci:
+    def _arac_bul(self, arac_id) :
         for arac in self.araclar:
             if arac.id == arac_id:
                 return arac
@@ -94,14 +91,6 @@ class UlasimYoneticisi:
     def __init__(self):
         self.araclar=[]
         self.sefer_gecmisi=[]
-        
-    def sefer_bitir(sefer,arac_id):
-        arac = self._arac_bul(arac_id)
-        self.sefer_gecmisi.append({"arac id": arac_id,
-                                   "tip": arac.bilgi_ver()["tip"],
-                                   "ücret": arac.ucret_hesapla(),
-                                   "bitiş durumu": arac.durum})
-        arac.sefer_bitir()
         
     def toplam_gelir(self):
          return sum(kayit["ucret"] for kayit in self.sefer_gecmisi)

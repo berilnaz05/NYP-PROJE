@@ -1,95 +1,31 @@
-from abc import ABC, abstractmethod
-from typing import List, Type
-from base import UlasimAraci
+from typing import List
+from base.ulasim_araci import UlasimAraci
 
-class UlasimRepositoryBase(ABC):
 
-    @abstractmethod
-    def ekle(self, arac: UlasimAraci) :
-        pass
-
-    @abstractmethod
-    def sil(self, arac_id) :
-        pass
-
-    @abstractmethod
-    def getir(self, arac_id):
-        pass
-
-    @abstractmethod
-    def tumunu_getir(self):
-        pass
-
-    # YENİ İŞ KURALLARI
-    @abstractmethod
-    def duruma_gore_getir(self, durum):
-        pass
-
-    @abstractmethod
-    def tipe_gore_getir(self, tip):
-        pass
-
-    @abstractmethod
-    def seferde_olanlar(self) :
-        pass
-
-    @abstractmethod
-    def kapasiteye_gore_getir(self, min_kapasit):
-        pass
-
-class BellekUlasimRepository(UlasimRepositoryBase):
-
+class UlasimRepository:
     def __init__(self):
         self._araclar: List[UlasimAraci] = []
 
-  
-    def ekle(self, arac: UlasimAraci) :
-        if not isinstance(arac, UlasimAraci):
-            raise TypeError("UlasimAraci türünde olmalı")
-
-        if any(a.id == arac.id for a in self._araclar):
-            raise ValueError("Aynı ID'ye sahip araç zaten var")
-
+    def ekle(self, arac: UlasimAraci):
+        if any(a.arac_id == arac.arac_id for a in self._araclar):
+            raise ValueError("Bu ID ile araç zaten var")
         self._araclar.append(arac)
 
-    def sil(self, arac_id: int) :
-        arac = self.getir(arac_id)
-        self._araclar.remove(arac)
-
-    def getir(self, arac_id: int) :
+  
+    def bul_id_ile(self, arac_id: int) -> UlasimAraci:
         for arac in self._araclar:
-            if arac.id == arac_id:
+            if arac.arac_id == arac_id:
                 return arac
         raise ValueError("Araç bulunamadı")
 
-    def tumunu_getir(self) :
+    def tumunu_getir(self) -> List[UlasimAraci]:
         return list(self._araclar)
 
-    
-    def duruma_gore_getir(self, durum) :
+    def duruma_gore(self, durum: str) -> List[UlasimAraci]:
         return [a for a in self._araclar if a.durum == durum]
 
-    def tipe_gore_getir(self, tip):
-        return [a for a in self._araclar if isinstance(a, tip)]
-
-    def seferde_olanlar(self) :
-        return self.duruma_gore_getir("Seferde")
-
-    def kapasiteye_gore_getir(self, min_kapasite) :
-        return [a for a in self._araclar if a.kapasite >= min_kapasite]
-
-    def arac_sayisi(self) :
-        return len(self._araclar)
-
-    def tip_ozeti(self):
-        ozet = {}
-        for arac in self._araclar:
-            tip = type(arac).__name__
-            ozet[tip] = ozet.get(tip, 0) + 1
-        return ozet
-
-    def durum_ozeti(self) :
-        ozet = {}
-        for arac in self._araclar:
-            ozet[arac.durum] = ozet.get(arac.durum, 0) + 1
-        return ozet
+    def bos_koltuk_en_az(self, min_bos: int) -> List[UlasimAraci]:
+        return [
+            a for a in self._araclar
+            if (a.kapasite - a.aktif_yolcu) >= min_bos
+        ]

@@ -1,110 +1,150 @@
-from repository import BellekUlasimRepository
-from implementations import Otobus
-from implementations import Bisiklet
-from implementations  import Scooter
+from implementations.otobus import Otobus
+from implementations.bisiklet import Bisiklet
+from implementations.scooter import Scooter
 
+def menu():
+    print("\nAKILLI KAMPÜS ULAŞIM SİSTEMİ")
+    print("---------------------------------------------------------------------")
+    print("1 - Otobüs oluştur")
+    print("2 - Bisiklet oluştur")
+    print("3 - Scooter oluştur")
+    print("0 - Çıkış")
 
-repo = BellekUlasimRepository()
-print("Repository oluşturuldu")
+araclar = []
 
-otobus1 = Otobus(
-    arac_id=1,
-    kapasite=40,
-    kalkis="A Kapısı",
-    bitis="B Kapısı",
-    mevcut_konum="Garaj",
-    durum="Boşta",
-    guzergah=["yurtlar", "rektrlük", "yemekhane"],
-    hat_no="K1",
-    km_ucreti=2.5
-)
-otobus1.mesafe_ayarla(12)
+while True:
+    menu()
+    secim = input("Seçiminiz: ")
 
-otobus2 = Otobus(
-    arac_id=2,
-    kapasite=30,
-    kalkis="Yurtlar",
-    bitis="Merkez",
-    mevcut_konum="Garaj",
-    durum="Seferde",
-    guzergah=["Yurtlar", "Merkez","kütüphane"],
-    hat_no="K2",
-    km_ucreti=3
-)
-otobus2.mesafe_ayarla(8)
+    if secim == "1":
+        otobus1 = Otobus(
+            arac_id=400,
+            kapasite=75,
+            kalkis="yurtlar",
+            bitis="kutuphane",
+            hat_no="Hat No:11A",
+            guzergah=["yurtlar", "Hastane", "mühendislik","rektörlük","kütüphane","fen fakültesi"],
+            durum="beklemede",
+            kapsam="Kampüs içi"
+        )
 
-bisiklet1 = Bisiklet(
-    arac_id=4,
-    kapasite=1,
-    kalkis="",
-    bitis="",
-    mevcut_konum="İstasyon 1",
-    durum="Boşta",
-    guzergah=[],
-    elektrikli=True,
-    batarya=100
-)
-scooter1 = Scooter(
-    arac_id=5,
-    kapasite=1,
-    kalkis="",
-    bitis="",
-    mevcut_konum="İstasyon 2",
-    durum="Boşta",
-    guzergah=[],
-    hiz=25,
-    dakika_ucreti=1.8
-)
+        otobus2 = Otobus(
+            arac_id=404,
+            kapasite=100,
+            kalkis="yurtlar",
+            bitis="rektörlük",
+            hat_no="Hat No:12B",
+            guzergah=["yurtlar","yemekhane","sağlık fakültesi","rektörlük","mühendislik","murat evler","anadolu","fatih","kadeş meydanı","anitta","hastane"],
+            durum="Beklemede",
+            kapsam="Kampus Dışı"
+        )
 
-print("Araçlar oluşturuldu")
+        otobusler = [otobus1, otobus2]
 
+        print("Otobüs seçenekleri:")
+        for i, otobus in enumerate(otobusler, start=1):
+            print(f"{i}. {otobus.hat_no}, Kapasite: {otobus.kapasite}")
 
-repo.ekle(otobus1)
-repo.ekle(otobus2)
-repo.ekle(bisiklet1)
-repo.ekle(scooter1)
+        secim_otobus = int(input("Seçmek istediğiniz otobüsü yazınız: "))
+        secili_otobus = otobusler[secim_otobus - 1]
 
-print("Araçlar repository'e eklendi")
+        secili_otobus.sefer_bilgisi()
+        tur = input("Ücret için tur seçin(kampus içi / kampus dışı): ").strip().lower()
+        print("Seçilen tur ücreti:", secili_otobus.ucret_hesapla(tur))
 
+        secili_otobus.sefer_baslat()
+        araclar.extend([otobus1, otobus2])
+        print("Otobüsler eklendi.")
 
-print("\n--- Tüm Araçlar ---")
-for arac in repo.tumunu_getir():
-    print(arac.bilgi_ver())
-    
-print("\n--- Seferde Olan Araçlar ---")
-for arac in repo.seferde_olanlar():
-    print(arac.bilgi_ver())
+    elif secim == "2":
+        bisikletler = []
 
+        bisiklet1 = Bisiklet(
+            arac_id=1,
+            kalkis="yurtlar",
+            bitis="",
+            durum="boşta",
+            guzergah=["yurtlar", "Hastane", "mühendislik","rektörlük","kütüphane","fen fakültesi"],
+            kapsam="kampus içi",
+            elektrikli="elektrikli",
+            batarya="%100",
+            km_ucreti=0.8
+        )
 
-print("\n--- Sadece Otobüsler ---")
-for arac in repo.tipe_gore_getir(Otobus):
-    print(arac.bilgi_ver())
+        bisiklet2 = Bisiklet(
+            arac_id=2,
+            kalkis="yurtlar",
+            bitis="",
+            durum="Boşta",
+            guzergah=["yurtlar","yemekhane","sağlık fakültesi","rektörlük","mühendislik","murat evler","anadolu","fatih","kadeş meydanı","anitta","hastane"],
+            kapsam="kampüsdışı",
+            elektrikli="elektrikli",
+            batarya="%100",
+            km_ucreti=2
+        )
 
+        bisikletler.extend([bisiklet1, bisiklet2])
 
-print("\n--- Kapasitesi 20 ve üzeri olanlar ---")
-for arac in repo.kapasiteye_gore_getir(20):
-    print(arac.bilgi_ver())
+        print("Bisiklet seçenekleri:")
+        for i, bisiklet in enumerate(bisikletler, start=1):
+            print(f"{i}. Bisiklet {bisiklet.arac_id}")
 
-print("\n--- Bisiklet Kullanımı ---")
-bisiklet1.sefer_baslat()
-bisiklet1.sure_ekle(20)
-print(bisiklet1.bilgi_ver())
+        secim_bisiklet =int(input("Seçmek istediğiniz bisikleti giriniz: "))
+        secili_bisiklet = bisikletler[secim_bisiklet - 1]
 
-print("\n--- Scooter Kullanımı ---")
-scooter1.sefer_baslat()
-scooter1.sure_ekle(15)
-print(scooter1.bilgi_ver())
+        dakika = int(input("Kullanım süresi (dk): "))
+        secili_bisiklet.sefer_baslat()
+        secili_bisiklet.sure_ekle(dakika)
+        araclar.append(secili_bisiklet)
+        print("Bisiklet seçildi.")
 
-print("\n--- Raporlar ---")
-print("Toplam araç sayısı:", repo.arac_sayisi())
-print("Tip özeti:", repo.tip_ozeti())
-print("Durum özeti:", repo.durum_ozeti())
+    elif secim == "3":
+        scooterler=[]
+        
+        scooter1 = Scooter(
+            arac_id=1,
+            kalkis="yurtlar",
+            bitis="",
+            durum="Boşta",
+            guzergah=["yurtlar", "Hastane", "mühendislik","rektörlük","kütüphane","fen fakültesi"],
+            elektrikli="evet",
+            batarya="%100",
+            dakika_ucreti=5,
+            kapsam="kampüs içi"
+        )
 
-print("\n--- Araç Silme ---")
-repo.sil(5)
-print("Scooter silindi")
+        scooter2 = Scooter(
+            arac_id=2,
+            kalkis="yurtlar",
+            bitis="",
+            durum="Boşta",
+            guzergah=["yurtlar", "Hastane", "mühendislik","rektörlük","kütüphane","fen fakültesi"],
+            elektrikli="evet",
+            batarya="%100",
+            dakika_ucreti=5,
+            kapsam="kampüs içi"
+        )
 
-print("Kalan araçlar:")
-for arac in repo.tumunu_getir():
-    print(arac.bilgi_ver())
+        scooterler.extend([scooter1, scooter2])
+
+        print("Scooter seçenekleri:")
+        for s, scooter in enumerate(scooterler, start=1):
+            print(f"{s}. Scooter {scooter.arac_id}")
+
+        secim_scooter = int(input("Seçmek istediğiniz scooter'ı giriniz: "))
+        secili_scooter = scooterler[secim_scooter - 1]
+
+        dakika = int(input("Kullanım süresi (dk): "))
+        secili_scooter.sefer_baslat()
+        secili_scooter.sure_ekle(dakika)
+        araclar.append(secili_scooter)
+        print("Scooter seçildi.")
+
+    elif secim == "0":
+        print("Çıkış yapıldı")
+        break
+
+    else:
+        print("Geçersiz seçim")
+
 
