@@ -1,6 +1,7 @@
 from base import UlasimAraci
-
-print("--------------jhbgvfdcfvgbh------------")
+from implementations import Otobus
+from implementations import bisiklet
+from implementations import scooter
 
 class UlasimYoneticisi:
 

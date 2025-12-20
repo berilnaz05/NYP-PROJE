@@ -1,8 +1,7 @@
 from repository import BellekUlasimRepository
-from implementations import Otobus, Bisiklet, Scooter
-
-
-print("\n========== TEST BASLIYOR ==========\n")
+from implementations import Otobus
+from implementations import Bisiklet
+from implementations  import Scooter
 
 
 repo = BellekUlasimRepository()
@@ -34,7 +33,6 @@ otobus2 = Otobus(
 )
 otobus2.mesafe_ayarla(8)
 
-
 bisiklet1 = Bisiklet(
     arac_id=4,
     kapasite=1,
@@ -46,7 +44,6 @@ bisiklet1 = Bisiklet(
     elektrikli=True,
     batarya=100
 )
-
 scooter1 = Scooter(
     arac_id=5,
     kapasite=1,
@@ -111,4 +108,3 @@ print("Kalan araçlar:")
 for arac in repo.tumunu_getir():
     print(arac.bilgi_ver())
 
-print("\n========== TEST BITTI ==========\n")
