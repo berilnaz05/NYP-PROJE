@@ -1,27 +1,32 @@
 from abc import ABC, abstractmethod
-from datetime import datetime,timedelta
-from enum import Enum 
-class Kapsam(Enum):
-    kampus_ici="kampus içi"
-    kampus_disi="kampüs dışı"
+from datetime import datetime, timedelta  #timedelta süre farkları
+from enum import Enum #sabit ve sınırlı değerler tanımlamak için
 
+class Kapsam(Enum):
+    kampus_ici = "kampüs içi"
+    kampus_disi = "kampüs dışı"
+
+#otobus ,bisiklet,scooter gibi ulaşım araçlarının ortak zelliklerini tanımlar
 class UlasimAraci(ABC):
-    def __init__(self,arac_id,kapasite,kalkis,bitis,durum,guzergah,kapsam):
+    #kurucu metod 
+    def __init__(self, arac_id, kapasite, kalkis, bitis, durum, guzergah, kapsam):
         self.arac_id = arac_id
-        self.kapsam=kapsam
+        self.kapsam = kapsam
         self.kapasite = kapasite
         self.kalkis = kalkis
         self.bitis = bitis
         self.durum = durum
         self.guzergah = guzergah
-        self.kullanim_alani="kampüs içi"
+        self.kullanim_alani = "kampüs içi"
 
+#nesne değişkenliği
+        self.aktif_yolcu = 0
+        self.mevcut_konum = kalkis
+# ne zaman oluşturulduğu güncelleme tarihi
         self.olusturma_tarihi = datetime.now()
         self.guncelleme_tarihi = datetime.now()
 
-        self.aktif_yolcu = 0
-               
-#soyut  metodlar
+    # --- Soyut metodlar ---
     @abstractmethod
     def sefer_bilgisi(self):
         pass
@@ -50,8 +55,7 @@ class UlasimAraci(ABC):
     def tahmini_sure(self):
         pass
 
-   #ortak kullanılacak alan
-
+    # --- Ortak kullanılan metodlar ---
     def konum_guncelle(self, yeni_konum):
         self.mevcut_konum = yeni_konum
         self.guncelleme_tarihi = datetime.now()
@@ -59,10 +63,11 @@ class UlasimAraci(ABC):
     def durum_guncelle(self, yeni_durum):
         self.durum = yeni_durum
         self.guncelleme_tarihi = datetime.now()
-        
+
     def bos_kapasite(self):
         return self.kapasite - self.aktif_yolcu
 
+# yolcu işlemleri
     def yolcu_ekle(self, adet=1):
         if self.aktif_yolcu + adet <= self.kapasite:
             self.aktif_yolcu += adet
@@ -94,13 +99,13 @@ class UlasimAraci(ABC):
 
     def ozet_bilgi(self):
         return {
-            "araç id": self.arac_id,
+            "arac_id": self.arac_id,
             "kapasite": self.kapasite,
             "aktif_yolcu": self.aktif_yolcu,
             "durum": self.durum,
             "konum": self.mevcut_konum
         }
-
+#yardımcı meetodlar
     def ayni_konum_mu(self, diger):
         return self.mevcut_konum == diger.mevcut_konum
 
@@ -109,7 +114,7 @@ class UlasimAraci(ABC):
         self.durum = "Müsait"
 
     def durum_metni(self):
-        return f"{self.id} - {self.durum}"
+        return f"{self.arac_id} - {self.durum}"
 
     def kapasite_doldu_mu(self):
         return self.aktif_yolcu >= self.kapasite
@@ -122,6 +127,51 @@ class UlasimAraci(ABC):
             "durum": self.durum,
             "doluluk": self.doluluk_orani()
         }
+#genel repository alanı
+
+class IRepository(ABC):
+#zorunlu methodlar
+    @abstractmethod
+    def listele(self):
+        pass
+
+    @abstractmethod
+    def id_ile_bul(self, item_id):
+        pass
+
+    @abstractmethod
+    def filtrele(self, **kwargs):
+        pass
+
+    @abstractmethod
+    def kaydet(self, item_id, item):
+        pass
+
+    @abstractmethod
+    def sil(self, item_id):
+        pass
+
+class TransportRepository(ABC):
+    @abstractmethod
+    def listele(self):
+        pass
+
+    @abstractmethod
+    def id_ile_bul(self, item_id):
+        pass
+
+    @abstractmethod
+    def kaydet(self, item_id, item):
+        pass
+
+    @abstractmethod
+    def sil(self, item_id):
+        pass
+
+    @abstractmethod
+    def filtrele(self, **kwargs):
+        pass
+
 class Sefer:
     def __init__(self, saat):
         self.saat = saat
@@ -129,5 +179,4 @@ class Sefer:
     def sefer_durumu(self):
         if self.saat < datetime.now():
             return "Sefer tamamlandı"
-        else:
-            return "Sefer bekleniyor"
+        return "Sefer bekleniyor"
