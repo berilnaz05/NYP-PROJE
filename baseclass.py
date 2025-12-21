@@ -30,7 +30,6 @@ class OdemeYontemi(ABC):
         self.verilen_nakit = verilen_nakit
         self.cuzdan_adi = cuzdan_adi
        
-
     @abstractmethod
     def yetkilendir(self, tutar):
         pass
@@ -45,7 +44,6 @@ class OdemeYontemi(ABC):
             print(f"{self.sahip} adlı kullanıcının bakiyesi yeterlidir.")
         else:
             print(f"{self.sahip} adlı kullanıcının bakiyesi yetersizdir.")
-
 
 # SUB CLASS 1 - Kredi Kartı Ödeme
 class KrediKartiOdeme(OdemeYontemi):
@@ -83,7 +81,6 @@ class KrediKartiOdeme(OdemeYontemi):
             print(f"Sayın {self.sahip}; {tutar} {self.para_birimi} tutarındaki ödemeniz başarıyla gerçekleştirildi.")
         else:
             print(f"Sayın {self.sahip}; yeterli bakiye yok!")
-
 
 # SUB CLASS 2 - Nakit Ödeme
 class NakitOdeme(OdemeYontemi):
@@ -199,7 +196,6 @@ class YemekhaneMenuServisi:
         ]:
             for urun, fiyat in kategori.items():
                 print(f"{urun}: {fiyat} TL")
-
 
 class Siparis:
     def __init__(self, secilen_urunler):
