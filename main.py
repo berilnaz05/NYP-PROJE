@@ -1,5 +1,4 @@
-from subclass import (
-
+from payment.subclass import (
     KrediKartiOdeme,
     NakitOdeme,
     DijitalCuzdanOdeme
