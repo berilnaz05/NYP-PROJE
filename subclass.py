@@ -1,6 +1,6 @@
 # SUB CLASS 1 - Kredi Kartı Ödeme
 
-from baseclass import OdemeYontemi
+from payment.base import OdemeYontemi
 from datetime import datetime
 
 class KrediKartiOdeme(OdemeYontemi):
