@@ -1,8 +1,10 @@
-# main.py
+from subclass import (
 
-from payment.credit_card import KrediKartiOdeme
-from payment.cash import NakitOdeme
-from payment.wallet import DijitalCuzdanOdeme
+    KrediKartiOdeme,
+    NakitOdeme,
+    DijitalCuzdanOdeme
+)
+
 
 def main():
     kredi_karti = KrediKartiOdeme(
