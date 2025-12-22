@@ -303,7 +303,5 @@ for bilgi in yonetici.duruma_gore_listele("Boşta"):
 for bilgi in yonetici.tum_araclari_listele():
     print(bilgi)
     
-print("En çok kullanılan araç tipi:", yonetici.en_cok_kullanilan_tip())
-print("Araç sayısı raporu:", yonetici.arac_sayisi_raporu())
-
-
+    print("En çok kullanılan araç tipi:", yonetici.en_cok_kullanilan_tip())
+    print("Araç sayısı raporu:", yonetici.arac_sayisi_raporu())
