@@ -1,14 +1,19 @@
 from abc import ABC, abstractmethod
-from datetime import datetime, timedelta  #timedelta süre farkları
-from enum import Enum #sabit ve sınırlı değerler tanımlamak için
+#timedelta süre farkları
+from datetime import datetime, timedelta 
+#sabit ve sınırlı değerler tanımlamak için 
+from enum import Enum 
 
 class Kapsam(Enum):
     kampus_ici = "kampüs içi"
-    kampus_disi = "kampüs dışı"
+    kampus_disi = "kampüs disi"
 
-#otobus ,bisiklet,scooter gibi ulaşım araçlarının ortak zelliklerini tanımlar
+#otobus ,bisiklet,scooter gibi ulaşım araçlarının ortak özelliklerini tanımlar
+
 class UlasimAraci(ABC):
-    #kurucu metod 
+
+#kurucu metod
+    
     def __init__(self, arac_id, kapasite, kalkis, bitis, durum, guzergah, kapsam):
         self.arac_id = arac_id
         self.kapsam = kapsam
@@ -20,13 +25,16 @@ class UlasimAraci(ABC):
         self.kullanim_alani = "kampüs içi"
 
 #nesne değişkenliği
+
         self.aktif_yolcu = 0
         self.mevcut_konum = kalkis
+
 # ne zaman oluşturulduğu güncelleme tarihi
+
         self.olusturma_tarihi = datetime.now()
         self.guncelleme_tarihi = datetime.now()
 
-    # --- Soyut metodlar ---
+# --- Soyut metodlar ---
     @abstractmethod
     def sefer_bilgisi(self):
         pass
@@ -55,7 +63,8 @@ class UlasimAraci(ABC):
     def tahmini_sure(self):
         pass
 
-    # --- Ortak kullanılan metodlar ---
+# --- Ortak kullanılan metodlar ---
+
     def konum_guncelle(self, yeni_konum):
         self.mevcut_konum = yeni_konum
         self.guncelleme_tarihi = datetime.now()
@@ -68,6 +77,7 @@ class UlasimAraci(ABC):
         return self.kapasite - self.aktif_yolcu
 
 # yolcu işlemleri
+
     def yolcu_ekle(self, adet=1):
         if self.aktif_yolcu + adet <= self.kapasite:
             self.aktif_yolcu += adet
@@ -105,7 +115,8 @@ class UlasimAraci(ABC):
             "durum": self.durum,
             "konum": self.mevcut_konum
         }
-#yardımcı meetodlar
+#yardımcı 
+
     def ayni_konum_mu(self, diger):
         return self.mevcut_konum == diger.mevcut_konum
 
@@ -130,7 +141,9 @@ class UlasimAraci(ABC):
 #genel repository alanı
 
 class IRepository(ABC):
+
 #zorunlu methodlar
+
     @abstractmethod
     def listele(self):
         pass

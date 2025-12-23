@@ -60,7 +60,7 @@ class UlasimYoneticisi:
         for arac in self.araclar
         if arac.durum == durum
     ]
-     #scooter sınıfı 
+#scooter sınıfı 
 class Scooter(UlasimAraci):
     def __init__(self, arac_id, kalkis, bitis, durum, guzergah,elektrikli, batarya, dakika_ucreti):
 
@@ -99,6 +99,7 @@ class Scooter(UlasimAraci):
             "durum": self.durum,
             "ucret": self.ucret_hesapla()
         }
+    
 # bisilet sınıfı
 
 class Bisiklet(UlasimAraci):
@@ -131,7 +132,9 @@ class Bisiklet(UlasimAraci):
 
     def tahmini_sure(self):
         return timedelta(minutes=30)
+    
 #araç hakkında ilgi verir
+
     def bilgi_ver(self):
         return {
             "tip": "Bisiklet",
@@ -174,6 +177,7 @@ class Otobus(UlasimAraci):
         return timedelta(minutes=len(self.guzergah) * 5)
 
 # otobüs bilgisi verir
+
     def bilgi_ver(self):
         return {
             "tip": "Otobüs",
@@ -197,6 +201,7 @@ class Shuttle(UlasimAraci):
         self.rezervasyonlar = []  # Rezervasyonları tutmak için liste
 
     # Soyut metodları implement et
+
     def sefer_bilgisi(self):
         return f"Shuttle {self.hat_no} seferde"
 
@@ -211,7 +216,7 @@ class Shuttle(UlasimAraci):
         self.rezervasyonlar.clear()  # sefer bitince rezervasyonları temizle
 
     def ucret_hesapla(self):
-        return 15  # sabit fiyat örneği
+        return 15# sabit fiyat örneği
 
     def tahmini_sure(self):
         return timedelta(minutes=len(self.guzergah) * 5)
@@ -224,8 +229,8 @@ class Shuttle(UlasimAraci):
             "ucret": self.ucret_hesapla(),
             "rezervasyon_sayisi": len(self.rezervasyonlar)
         }
+#  Shuttle’a özel
 
-    #  Shuttle’a özel 
     def rezervasyon_yap(self, isim, kisi_sayisi=1):
         if self.bos_kapasite() >= kisi_sayisi:
             self.rezervasyonlar.append({"isim": isim, "kisi_sayisi": kisi_sayisi})
@@ -241,7 +246,7 @@ class Shuttle(UlasimAraci):
                 return True
         return False
 
-# veriyi ramda tutar
+# veriyi  tutar
 class MemoryTransportRepository(IRepository):
     def __init__(self):
         self.data = {}
@@ -265,6 +270,7 @@ class MemoryTransportRepository(IRepository):
         self.data.pop(item_id, None)
         
 #servis yapısı
+
 class TransportService:
     def __init__(self, repo: TransportRepository, yonetici: UlasimYoneticisi):
         self.repo = repo
