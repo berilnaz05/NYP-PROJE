@@ -1,11 +1,13 @@
 # SUB CLASS 1 - Kredi Kartı Ödeme
-
-from payment.base import OdemeYontemi
+from base import OdemeYontemi
 from datetime import datetime
 
 class KrediKartiOdeme(OdemeYontemi):
-    def __init__(self, kart_numarasi, son_kullanma_tarihi, cvv, sahip, bakiye, para_birimi="TL"):
-        super().__init__(kart_numarasi, son_kullanma_tarihi, cvv, 0, sahip, bakiye, para_birimi)
+    def __init__(self, sahip, bakiye, kart_numarasi, son_kullanma_tarihi, cvv):
+        super().__init__(sahip, bakiye, para_birimi="TL")
+        self.kart_numarasi = kart_numarasi
+        self.son_kullanma_tarihi = son_kullanma_tarihi
+        self.cvv = cvv
 
         if len(kart_numarasi) != 16:
             raise ValueError("Kart numarası 16 haneli olmalıdır.")
@@ -20,11 +22,18 @@ class KrediKartiOdeme(OdemeYontemi):
         if len(cvv) != 3:
             raise ValueError("CVV kodu 3 haneli olmalıdır.")
 
-        if para_birimi != "TL":
-            raise ValueError("Kredi kartı ödemeleri sadece TL cinsindendir.")
-
     def yetkilendir(self, tutar):
         return self.bakiye >= tutar
+
+    def odeme_tipi(self):
+        print("Lütfen ödemek istediğiniz para birimini seçiniz.")
+        if self.para_birimi == "TL":
+            return
+        elif self.para_birimi == "USD":
+            return
+        elif self.para_birimi == "EUR":
+            return
+        return
 
     def ode(self, tutar):
         if self.yetkilendir(tutar):
@@ -36,12 +45,22 @@ class KrediKartiOdeme(OdemeYontemi):
 
 # SUB CLASS 2 - Nakit Ödeme
 class NakitOdeme(OdemeYontemi):
-    def __init__(self, kart_numarasi, son_kullanma_tarihi, cvv, sahip, bakiye, para_birimi="TL"):
-        super().__init__(kart_numarasi, son_kullanma_tarihi, cvv, 0, sahip, bakiye, para_birimi)
+    def __init__(self,sahip,bakiye,para_birimi):
+        super().__init__(sahip ,bakiye, para_birimi)
 
     def yetkilendir(self, tutar):
         return self.bakiye >= tutar
 
+    def odeme_tipi(self):
+        print("Lütfen ödemek istediğiniz para birimini seçiniz.")
+        if self.para_birimi == "TL":
+            return
+        elif self.para_birimi == "USD":
+            return
+        elif self.para_birimi == "EUR":
+            return
+        return
+    
     def ode(self, tutar):
         if self.yetkilendir(tutar):
             self.bakiye -= tutar
@@ -52,19 +71,16 @@ class NakitOdeme(OdemeYontemi):
 
 # SUB CLASS 3 - Dijital Cüzdan Ödeme
 class DijitalCuzdanOdeme(OdemeYontemi):
-    def __init__(self, tutar, sahip, bakiye, para_birimi="TL", cuzdan_adi=None, dogrulanmis=False):
-        super().__init__(None, None, None, tutar, sahip, bakiye, para_birimi, cuzdan_adi, dogrulanmis)
+    def __init__(self, sahip, bakiye, para_birimi="TL", cuzdan_adi="", dogrulanmis=False):
+        super().__init__(sahip, bakiye, para_birimi)
+        self.cuzdan_adi = cuzdan_adi
+        self.dogrulanmis = dogrulanmis
 
     def yetkilendir(self, tutar):
         return self.bakiye >= tutar and self.dogrulanmis
-
+    
     def ode(self, tutar):
         if not self.dogrulanmis:
             print(f"{self.cuzdan_adi} adlı dijital cüzdan doğrulanmadı. Ödeme yapılamıyor.")
-            return
-
-        if self.bakiye >= tutar:
-            self.bakiye -= tutar
-            print(f"{tutar} {self.para_birimi} tutarındaki ödeme {self.cuzdan_adi} adlı dijital cüzdandan başarıyla gerçekleştirildi.")
-        else:
-            print("Yetersiz bakiye!")
+            return False
+        return super().ode(tutar)

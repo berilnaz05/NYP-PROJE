@@ -1,26 +1,17 @@
-from payment.subclass import (
-    KrediKartiOdeme,
-    NakitOdeme,
-    DijitalCuzdanOdeme
+from payment.credit_card import KrediKartiOdeme
+from payment.repositories.odeme_repository import OdemeRepository
+from payment.services.odeme_service import OdemeIslemServisi
+
+kart = KrediKartiOdeme(
+    tutar=40,
+    sahip="Beril",
+    bakiye=100,
+    kart_numarasi="1234567812345678",
+    son_kullanma_tarihi="12/30",
+    cvv="123"
 )
 
+repo = OdemeRepository()
+servis = OdemeIslemServisi(repo)
 
-def main():
-    kredi_karti = KrediKartiOdeme(
-        tutar=0,
-        sahip="Beril",
-        bakiye=500,
-        kart_numarasi="1234567812345678",
-        son_kullanma_tarihi="12/26",
-        cvv="123"
-    )
-
-    sonuc = kredi_karti.ode(200)
-
-    if sonuc:
-        print("Ödeme başarılı 🎉")
-    else:
-        print("Ödeme başarısız ❌")
-
-if __name__ == "__main__":
-    main()
+servis.odeme_yap("Beril", 40, kart)
