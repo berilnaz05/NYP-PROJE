@@ -72,12 +72,6 @@ class MenuService:
         self.menu = [urun for urun in self.menu if urun["kategori"] != kategori]
         self.kategoriler.discard(kategori)
 
-    def rastgele_urun_sec(self):
-        import random
-        if not self.menu:
-            return None
-        return random.choice(self.menu)
-
     def urunler_bilgi_yazdir(self):
         for urun in self.menu:
             print(f"Ürün: {urun['isim']}, Fiyat: {urun['fiyat']}, Kategori: {urun['kategori']}")
@@ -133,5 +127,3 @@ class MenuService:
                         self.urun_ekle(isim, float(fiyat.replace(" TL", "")), kategori)
         except FileNotFoundError:
             pass
-
-# Menü servisi artık 150 satıra yakın ve çok fonksiyonlu

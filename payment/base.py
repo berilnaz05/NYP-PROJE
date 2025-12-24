@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 import uuid
 
-
 class OdemeYontemi(ABC):
     GECERLI_PARA_BIRIMLERI = {"TL", "USD", "EUR"}
 
