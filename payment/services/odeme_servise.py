@@ -1,5 +1,5 @@
 from typing import List, Dict
-from base import OdemeYontemi
+from payment.base import OdemeYontemi
 from datetime import datetime
 
 class OdemeService:
