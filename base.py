@@ -164,26 +164,6 @@ class IRepository(ABC):
     def sil(self, item_id):
         pass
 
-class TransportRepository(ABC):
-    @abstractmethod
-    def listele(self):
-        pass
-
-    @abstractmethod
-    def id_ile_bul(self, item_id):
-        pass
-
-    @abstractmethod
-    def kaydet(self, item_id, item):
-        pass
-
-    @abstractmethod
-    def sil(self, item_id):
-        pass
-
-    @abstractmethod
-    def filtrele(self, **kwargs):
-        pass
 
 class RaporBase(ABC):
     @abstractmethod

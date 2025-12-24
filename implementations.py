@@ -1,5 +1,5 @@
 from datetime import timedelta
-from base import UlasimAraci, IRepository, TransportRepository, Kapsam
+from base import UlasimAraci, IRepository, Kapsam
 
 #sistemdei tüm araçları yönetir
 class UlasimYoneticisi:
@@ -276,7 +276,7 @@ class MemoryTransportRepository(IRepository):
 #servis yapısı
 
 class TransportService:
-    def __init__(self, repo: TransportRepository, yonetici: UlasimYoneticisi):
+    def __init__(self, repo: IRepository, yonetici: UlasimYoneticisi):
         self.repo = repo
         self.yonetici = yonetici
 
