@@ -32,8 +32,10 @@ class UlasimYoneticisi:
     def tum_araclari_listele(self):
         return [arac.bilgi_ver() for arac in self.araclar  ] 
 
+
     def toplam_gelir(self):
-        return sum(k["ucret"] for k in self.sefer_gecmisi)
+     return sum(k.get("ucret", 0) for k in self.sefer_gecmisi)
+
     
     def en_cok_kullanilan_tip(self):
         if not self.sefer_gecmisi:
@@ -47,24 +49,25 @@ class UlasimYoneticisi:
 
         return max(sayac, key=sayac.get)
     def arac_sayisi_raporu(self):
-     rapor = {}
+        rapor = {}
 
-     for arac in self.araclar:
-        tip = arac.bilgi_ver()["tip"]
-        rapor[tip] = rapor.get(tip, 0) + 1
-
+        for arac in self.araclar:
+         tip = arac.bilgi_ver()["tip"]
+         rapor[tip] = rapor.get(tip, 0) + 1
         return rapor
+    
     def duruma_gore_listele(self, durum):
       return [
         arac.bilgi_ver()
         for arac in self.araclar
-        if arac.durum == durum
+           if arac.durum == durum
     ]
 #scooter sınıfı 
 class Scooter(UlasimAraci):
     def __init__(self, arac_id, kalkis, bitis, durum, guzergah,elektrikli, batarya, dakika_ucreti):
 
-        super().__init__(arac_id=arac_id,kapasite=1,kalkis=kalkis,bitis=bitis,durum=durum,guzergah=guzergah,kapsam=Kapsam.kampus_ici)
+        super().__init__(arac_id=arac_id,kapasite=1,kalkis=kalkis,bitis=bitis,
+                         durum=durum,guzergah=guzergah,kapsam=Kapsam.kampus_ici)
         self.elektrikli = elektrikli
         self.batarya = batarya
         self.dakika_ucreti = dakika_ucreti
@@ -147,7 +150,8 @@ class Bisiklet(UlasimAraci):
 
 class Otobus(UlasimAraci):
     def __init__(self, arac_id, kapasite, kalkis, bitis,durum, guzergah, hat_no, kapsam):
-        super().__init__(arac_id=arac_id,kapasite=kapasite,kalkis=kalkis,bitis=bitis,durum=durum,guzergah=guzergah,kapsam=kapsam)
+        super().__init__(arac_id=arac_id,kapasite=kapasite,kalkis=kalkis,
+                         bitis=bitis,durum=durum,guzergah=guzergah,kapsam=kapsam)
         self.hat_no = hat_no
         self.ucret_kampus_ici = 10
         self.ucret_kampus_disi = 20
@@ -200,7 +204,7 @@ class Shuttle(UlasimAraci):
         self.hat_no = hat_no
         self.rezervasyonlar = []  # Rezervasyonları tutmak için liste
 
-    # Soyut metodları implement et
+    # Soyut metodları uygulanır hale getirelim
 
     def sefer_bilgisi(self):
         return f"Shuttle {self.hat_no} seferde"
@@ -284,8 +288,11 @@ class TransportService:
         arac.sefer_baslat()
         arac.hareket_et()
 
+        # Sefer geçmişine daha fazla bilgi ekliyoruz
         self.yonetici.sefer_gecmisi.append({
             "sefer_id": sefer_id,
             "tip": arac.bilgi_ver()["tip"],
-            "ucret": arac.ucret_hesapla()
+            "ucret": arac.ucret_hesapla(),
+            "sure": getattr(arac, "kullanilan_dakika", None),   # varsa süre
+            "yolcu": getattr(arac, "aktif_yolcu", None)         # varsa yolcu sayısı
         })

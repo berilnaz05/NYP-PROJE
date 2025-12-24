@@ -40,7 +40,7 @@ for arac in [scooter1, bisiklet1, otobus1, shuttle1]:
 
 # Sefer ve Kullanım Testleri
 
-print("-----------------------------------Sefer ve kullanım testleri yapılıyor...\n--------------------------------")
+print("-----------------------------------Sefer ve kullanım testleri yapılıyor--------------------------------")
 
 # Scooter testi
 
