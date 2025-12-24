@@ -20,11 +20,17 @@ repo = MemoryTransportRepository()
 service = TransportService(repo, yonetici)
 
 # Araçları oluşturma
-
 scooter1 = Scooter(1, "A Kapısı", "B Kapısı", "Boşta", ["A","B"], True, 80, 2)
-bisiklet1 = Bisiklet(2, "Spor Salonu", "Mühendislik", "Boşta", ["Spor","Yemekhane","Mühendislik"], False, 0)
-otobus1 = Otobus(3, 40, "Ana Giriş", "Kampüs İçi", "Boşta", ["Giriş","Merkez","Yurtlar"], "K1", Kapsam.kampus_ici)
-shuttle1 = Shuttle(4, 20, "Kampüs", "Şehir Merkezi", "Boşta", ["Kampüs","AVM","Merkez"], "S1", Kapsam.kampus_disi)
+scooter2 = Scooter(2, "Yurtlar", "Kütüphane", "Boşta", ["Yurt","Merkez","Kütüphane"], True, 40, 2)
+
+bisiklet1 = Bisiklet(3, "Spor Salonu", "Mühendislik", "Boşta", ["Spor","Yemekhane","Mühendislik"], False, 0)
+bisiklet2 = Bisiklet(4, "Fen Fakültesi", "Merkez", "Boşta", ["Fen","Merkez"], True, 60)
+
+otobus1 = Otobus(5, 40, "Ana Giriş", "Kampüs İçi", "Boşta", ["Giriş","Merkez","Yurtlar"], "K1", Kapsam.kampus_ici)
+otobus2 = Otobus(6, 50, "Kampüs", "Şehir Merkezi", "Boşta", ["Kampüs","AVM","Merkez"], "D2", Kapsam.kampus_disi)
+
+shuttle1 = Shuttle(7, 20, "Kampüs", "Şehir Merkezi", "Boşta", ["Kampüs","AVM","Merkez"], "S1", Kapsam.kampus_disi)
+shuttle2 =Shuttle(5,15,"kampüs","Hastane","Boşta",["kampüs","meydan","hastane"],"S2",Kapsam.kampus_disi)
 
 # Araçları repo ve yöneticiye ekleme
 

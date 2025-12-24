@@ -34,9 +34,10 @@ otobus1 = Otobus(5, 40, "Ana Giriş", "Kampüs İçi", "Boşta", ["Giriş","Merk
 otobus2 = Otobus(6, 50, "Kampüs", "Şehir Merkezi", "Boşta", ["Kampüs","AVM","Merkez"], "D2", Kapsam.kampus_disi)
 
 shuttle1 = Shuttle(7, 20, "Kampüs", "Şehir Merkezi", "Boşta", ["Kampüs","AVM","Merkez"], "S1", Kapsam.kampus_disi)
+shuttle2 =Shuttle(8,15,"kampüs","Hastane","Boşta",["kampüs","meydan","hastane"],"S2",Kapsam.kampus_disi)
 
 # Araçları hem repo hem yöneticiye ekleme
-for arac in [scooter1, scooter2, bisiklet1, bisiklet2, otobus1, otobus2, shuttle1]:
+for arac in [scooter1, scooter2, bisiklet1, bisiklet2, otobus1, otobus2, shuttle1,shuttle2]:
     yonetici.arac_ekle(arac)
     repo.kaydet(arac.arac_id, arac)
 

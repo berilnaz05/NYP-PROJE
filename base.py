@@ -138,8 +138,8 @@ class UlasimAraci(ABC):
             "durum": self.durum,
             "doluluk": self.doluluk_orani()
         }
+    
 #genel repository alanı
-
 class IRepository(ABC):
 
 #zorunlu methodlar
@@ -183,6 +183,19 @@ class TransportRepository(ABC):
 
     @abstractmethod
     def filtrele(self, **kwargs):
+        pass
+
+class RaporBase(ABC):
+    @abstractmethod
+    def guzergah_sayac(self):
+        pass
+
+    @abstractmethod
+    def gelir_tip(self):
+        pass
+
+    @abstractmethod
+    def sayac(self):
         pass
 
 class Sefer:

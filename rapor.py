@@ -32,10 +32,11 @@ otobus1 = Otobus(5, 40, "Ana Giriş", "Kampüs İçi", "Boşta", ["Giriş","Merk
 otobus2 = Otobus(6, 50, "Kampüs", "Şehir Merkezi", "Boşta", ["Kampüs","AVM","Merkez"], "D2", Kapsam.kampus_disi)
 
 shuttle1 = Shuttle(7, 20, "Kampüs", "Şehir Merkezi", "Boşta", ["Kampüs","AVM","Merkez"], "S1", Kapsam.kampus_disi)
+shuttle2 =Shuttle(5,15,"kampüs","Hastane","Boşta",["kampüs","meydan","hastane"],"S2",Kapsam.kampus_disi)
 
 # Araçları repo ve yöneticiye ekleme
 
-for arac in [scooter1, scooter2, bisiklet1, bisiklet2, otobus1, otobus2, shuttle1]:
+for arac in [scooter1, scooter2, bisiklet1, bisiklet2, otobus1, otobus2, shuttle1,shuttle2]:
     yonetici.arac_ekle(arac)
     repo.kaydet(arac.arac_id, arac)
 
@@ -45,13 +46,31 @@ scooter1.sure_ekle(25)
 service.sefer_baslat(sefer_id=101, arac_id=scooter1.arac_id)
 yonetici.sefer_bitir(scooter1.arac_id)
 
-bisiklet2.sure_ekle(15)
-service.sefer_baslat(sefer_id=102, arac_id=bisiklet2.arac_id)
+bisiklet1.sure_ekle(15)
+service.sefer_baslat(sefer_id=102, arac_id=bisiklet1.arac_id)
+yonetici.sefer_bitir(bisiklet1.arac_id)
+
+
+bisiklet2.sure_ekle(45)
+service.sefer_baslat(sefer_id=10, arac_id=bisiklet2.arac_id)
 yonetici.sefer_bitir(bisiklet2.arac_id)
 
 otobus1.yolcu_ekle(15)
 service.sefer_baslat(sefer_id=103, arac_id=otobus1.arac_id)
 yonetici.sefer_bitir(otobus1.arac_id)
+
+otobus2.yolcu_ekle(20)
+service.sefer_baslat(sefer_id=10,arac_id=otobus2.arac_id)
+yonetici.sefer_bitir(otobus2.arac_id)
+
+scooter2.sure_ekle(35)
+service.sefer_baslat(sefer_id=56,arac_id=scooter2.arac_id)
+yonetici.sefer_bitir(scooter2.arac_id)
+
+shuttle2.rezervasyon_yap("Ali",1)
+shuttle2.rezervasyon_yap("veli",1)
+service.sefer_baslat(sefer_id=5,arac_id=shuttle2.arac_id)
+yonetici.sefer_bitir(shuttle2.arac_id)
 
 shuttle1.rezervasyon_yap("Ahmet", 3)
 shuttle1.rezervasyon_yap("Ayşe", 2)
@@ -64,7 +83,12 @@ yonetici.sefer_gecmisi.extend([
     {"tip": "Scooter", "ucret": scooter1.ucret_hesapla()},
     {"tip": "Bisiklet", "ucret": bisiklet2.ucret_hesapla()},
     {"tip": "Otobüs", "ucret": otobus1.ucret_hesapla()},
-    {"tip": "Shuttle", "ucret": shuttle1.ucret_hesapla()}
+    {"tip": "Shuttle", "ucret": shuttle1.ucret_hesapla()},
+    {"tip": "Otobus", "ucret": otobus2.ucret_hesapla()},
+    {"tip": "Bisiklet","ucret":bisiklet1.ucret_hesapla()},
+    {"tip": "Scooter","ucret":scooter2.ucret_hesapla()},
+    {"tip": "Shuttle", "ucret":shuttle2.ucret_hesapla()}
+
 ])
 
 # Araç Raporları
