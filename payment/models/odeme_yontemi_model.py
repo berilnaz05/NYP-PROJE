@@ -1,6 +1,6 @@
 from datetime import datetime
 import uuid
-from base import OdemeYontemi
+from ..base import OdemeYontemi
 
 
 class OdemeYontemiModel:

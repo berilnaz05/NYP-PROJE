@@ -1,4 +1,4 @@
-from models.odeme_model import OdemeModel
+
 import json
 from datetime import datetime
 from glob import glob

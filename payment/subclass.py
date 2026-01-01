@@ -19,7 +19,15 @@ class KrediKartiOdeme(OdemeYontemi):
                 raise ValueError("Kartın son kullanma tarihi geçmiş.")
         except:
             raise ValueError("Son kullanma tarihi formatı yanlış. 'AA/YY' şeklinde olmalı.")
-
+        
+    def ode(self, tutar: float) -> bool:
+        if self.bakiye >= tutar:
+         self.bakiye -= tutar
+         self.islem_id = f"KK-{self.sahip}-{tutar}"
+         self.fisler.append(f"{tutar} TL kredi kartı ile ödendi")
+         return True
+        return False
+     
     def yetkilendir(self, tutar):
         return self.bakiye >= tutar
 
@@ -59,6 +67,11 @@ class DijitalCuzdanOdeme(OdemeYontemi):
             print(f"{self.__cuzdan_adi} adlı dijital cüzdan doğrulanmadı.")
             return False
         return self.bakiye >= tutar
+    
+    def ode(self, tutar: float) -> bool:
+        if not self.dogrulanmis:
+            print("❌ Cüzdan doğrulanmamış.")
+            return False
 
     @property
     def dogrulanmis(self):

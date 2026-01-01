@@ -4,12 +4,13 @@ from payment.subclass import KrediKartiOdeme, NakitOdeme, DijitalCuzdanOdeme
 # Servisler
 from payment.services.menu_service import MenuService
 from payment.services.siparis_service import SiparisService
-from payment.services.odeme_servise import OdemeService
-from payment.services.raporlama_servise import RaporlamaService
+from payment.services.odeme_service import OdemeService
+from payment.services.raporlama_service import RaporlamaService
 
 # Modeller
 from payment.models.odeme_model import OdemeModel
 from payment.models.odeme_yontemi_model import OdemeYontemiModel
+
 
 
 # 1️⃣ Menü ve ürünler

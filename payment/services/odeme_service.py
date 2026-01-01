@@ -1,6 +1,9 @@
 from typing import List, Dict
-from payment.base import OdemeYontemi
 from datetime import datetime
+
+from ..base import OdemeYontemi
+from ..repositories.odeme_repository import OdemeModel
+
 
 class OdemeService:
     def __init__(self):

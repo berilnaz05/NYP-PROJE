@@ -1,6 +1,6 @@
 from typing import List, Dict
 from datetime import datetime
-from odeme_service import OdemeService
+from .odeme_service import OdemeService
 
 class RaporlamaService:
     def __init__(self, odeme_service: OdemeService):

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 import uuid
-from base import OdemeYontemi
+from ..base import OdemeYontemi
 
 class OdemeModel:
     tum_odemeler: List[dict] = []

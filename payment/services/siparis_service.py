@@ -1,5 +1,5 @@
 from typing import List, Dict
-from menu_service import MenuService
+from .menu_service import MenuService
 from datetime import datetime
 
 class SiparisService:

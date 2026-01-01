@@ -127,9 +127,16 @@ class OdemeYontemi(ABC):
         print("İşlem başarısız ❌")
 
     # Getter / Setter 
+    
     @property
     def bakiye(self):
-        return self.__bakiye
+        return self._bakiye
+
+    @bakiye.setter
+    def bakiye(self, value):
+        if value < 0:
+            raise ValueError("Bakiye negatif olamaz")
+        self._bakiye = value
 
     @property
     def sahip(self):
